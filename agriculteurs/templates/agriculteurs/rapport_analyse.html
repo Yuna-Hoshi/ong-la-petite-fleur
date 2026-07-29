@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Rapport d'Analyse - ONG La Petite Fleur</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; }
+        }
+    </style>
+</head>
+<body class="bg-light py-5">
+    <div class="container bg-white p-5 rounded shadow-sm">
+        <!-- Boutons de contrôle (masqués à l'impression) -->
+        <div class="d-flex justify-content-between align-items-center mb-4 no-print">
+            <a href="{% url 'dashboard_analyse' %}" class="btn btn-secondary">Retour au Dashboard</a>
+            <button onclick="window.print()" class="btn btn-success">Imprimer / Enregistrer en PDF</button>
+        </div>
+
+        <!-- En-tête du Rapport -->
+        <div class="text-center mb-5 border-bottom pb-4">
+            <h2 class="fw-bold text-success">Rapport d'Analyse des Producteurs Ruraux</h2>
+            <p class="text-muted">ONG La Petite Fleur</p>
+        </div>
+
+        <!-- Statistiques Globales -->
+        <div class="row text-center mb-4">
+            <div class="col-md-4">
+                <div class="p-3 border rounded bg-light">
+                    <h5>Total Enregistrés</h5>
+                    <h3>{{ total_agriculteurs }}</h3>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-3 border rounded bg-light">
+                    <h5>Hommes</h5>
+                    <h3 class="text-primary">{{ total_hommes }}</h3>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-3 border rounded bg-light">
+                    <h5>Femmes</h5>
+                    <h3 class="text-danger">{{ total_femmes }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tableaux d'analyse -->
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <h5>📍 Top Localités</h5>
+                <ul class="list-group">
+                    {% for loc, count in top_localites.items %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ loc }} <span class="badge bg-success rounded-pill">{{ count }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="col-md-6 mb-4">
+                <h5>💧 Sources d'eau</h5>
+                <ul class="list-group">
+                    {% for eau, count in sources_eau.items %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ eau }} <span class="badge bg-primary rounded-pill">{{ count }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="col-md-6 mb-4">
+                <h5>⚠️ Difficultés Fréquentes</h5>
+                <ul class="list-group">
+                    {% for prob, count in problemes_frequents.items %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ prob }} <span class="badge bg-warning text-dark rounded-pill">{{ count }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="col-md-6 mb-4">
+                <h5>📊 Tranches d'âges</h5>
+                <ul class="list-group">
+                    {% for tranche, count in tranches_ages.items %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ tranche }} <span class="badge bg-secondary rounded-pill">{{ count }}</span>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

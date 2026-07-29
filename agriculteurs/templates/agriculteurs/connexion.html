@@ -1,0 +1,40 @@
+{% extends 'agriculteurs/base.html' %}
+
+{% block title %}Connexion - La petite Fleur{% endblock %}
+
+{% block content %}
+<div class="flex justify-center items-center h-[75vh]">
+    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md border border-nature-100">
+        <div class="text-center mb-6">
+            <span class="text-4xl">🌱</span>
+            <h2 class="text-2xl font-bold text-nature-700 mt-2">La petite Fleur</h2>
+            <p class="text-sm text-gray-500">Réservé exclusivement aux membres de l'ONG</p>
+        </div>
+
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            
+            {% for field in form %}
+            <div>
+                <label class="block text-sm font-medium text-nature-600 mb-1">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ field.errors.0 }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="w-full bg-nature-600 hover:bg-nature-700 text-white font-semibold py-2.5 rounded-lg transition duration-200 shadow-md">
+                Se connecter
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Petite astuce pour appliquer le style Tailwind aux champs du formulaire Django
+    document.querySelectorAll('input').forEach(input => {
+        input.classList.add('w-full', 'px-3', 'py-2', 'border', 'border-gray-300', 'rounded-lg', 'focus:outline-none', 'focus:ring-2', 'focus:ring-nature-600');
+    });
+</script>
+{% endblock %}

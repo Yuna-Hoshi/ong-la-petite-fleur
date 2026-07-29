@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des Agriculteurs - ONG La Petite Fleur</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container my-5">
+        <!-- En-tête avec titre et boutons -->
+        <div class="d-flex justify-content-between align-items-center mb-4 no-print">
+            <div>
+                <h2>Liste des Agriculteurs</h2>
+            </div>
+
+            <div class="d-flex align-items-center gap-2">
+                <!-- Bouton Retour au tableau de bord (Visible pour TOUT LE MONDE : Admin et Agents) -->
+                <a href="{% url 'dashboard_analyse' %}" class="btn btn-outline-secondary">Retour au tableau de bord</a>
+
+                <!-- Bouton Télécharger le Rapport PDF (Strictement réservé à l'Administrateur) -->
+                {% if request.user.is_superuser or request.user.profil.role == 'admin' %}
+                    <a href="{% url 'export_pdf' %}" class="btn btn-danger">Télécharger le Rapport PDF</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Formulaire de recherche -->
+        <form method="GET" class="input-group mb-4 no-print">
+            <input type="text" name="q" class="form-control" placeholder="Rechercher par nom, localité, culture, code unique..." value="{{ search_query }}">
+            <button class="btn btn-outline-success" type="submit">Rechercher</button>
+            {% if search_query %}
+                <a href="{% url 'liste_agriculteurs' %}" class="btn btn-outline-secondary">Réinitialiser</a>
+            {% endif %}
+        </form>
+
+        <!-- Tableau des résultats -->
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <table class="table table-striped table-hover align-middle">
+                    <thead class="table-success">
+                        <tr>
+                            <th>Code / Nom & Prénom</th>
+                            <th>Sexe</th>
+                            <th>Âge</th>
+                            <th>Localité</th>
+                            <th>Cultures principales</th>
+                            <th>Statut</th>
+                            <th class="no-print">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ag in agriculteurs %}
+                        <tr>
+                            <td>
+                                <strong>{{ ag.nom_prenom }}</strong>
+                                {% if ag.code_unique %}
+                                    <br><small class="text-muted">Réf: {{ ag.code_unique }}</small>
+                                {% endif %}
+                            </td>
+                            <td>{{ ag.sexe }}</td>
+                            <td>{{ ag.age }}</td>
+                            <td>{{ ag.localite }}</td>
+                            <td>{{ ag.principales_cultures }}</td>
+                            <td>
+                                {% if ag.statut_traitement == 'traite' %}
+                                    <span class="badge bg-success">Traité</span>
+                                {% elif ag.statut_traitement == 'en_cours' %}
+                                    <span class="badge bg-primary">En cours</span>
+                                {% else %}
+                                    <span class="badge bg-warning text-dark">En attente</span>
+                                {% endif %}
+                            </td>
+                            <td class="no-print">
+                                <div class="btn-group" role="group">
+                                    <a href="{% url 'detail_agriculteur' ag.pk %}" class="btn btn-sm btn-info text-white">Détails</a>
+                                    
+                                    <!-- Option Modifier accessible aux agents et admins -->
+                                    <a href="{% url 'modifier_agriculteur' ag.pk %}" class="btn btn-sm btn-warning">Modifier</a>
+                                    
+                                    <!-- Option Supprimer strictement réservée à l'Administrateur -->
+                                    {% if request.user.is_superuser or request.user.profil.role == 'admin' %}
+                                        <a href="{% url 'supprimer_agriculteur' ag.pk %}" onclick="return confirm('Voulez-vous vraiment supprimer cet agriculteur ?');" class="btn btn-sm btn-danger">Supprimer</a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center text-muted">Aucun agriculteur trouvé.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

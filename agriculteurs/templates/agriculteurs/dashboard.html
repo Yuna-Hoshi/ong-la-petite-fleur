@@ -1,0 +1,171 @@
+{% extends 'agriculteurs/base.html' %}
+{% load static %}
+
+{% block title %}Tableau de Bord - La petite Fleur{% endblock %}
+
+{% block content %}
+<!-- Conteneur global avec position relative pour le filigrane -->
+<div class="relative min-h-screen">
+    
+    <!-- Logo en arrière-plan (filigrane discret) -->
+    <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-0 opacity-5">
+        <img src="{% static 'agriculteurs/logo.png' %}" alt="Logo Filigrane" class="w-1/2 max-w-lg object-contain">
+    </div>
+
+    <!-- Contenu du tableau de bord au premier plan (z-10) -->
+    <div class="relative z-10">
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-nature-700">Tableau de bord & Analyse Automatique</h1>
+            <p class="text-gray-600 mt-1">Suivi global et analyse approfondie des producteurs ruraux.</p>
+        </div>
+
+        
+
+        <!-- 1. Cartes statistiques globales (Genre et Volume) -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-nature-100 flex items-center">
+                <div class="p-4 bg-nature-100 text-nature-700 rounded-full text-2xl mr-4">🌾</div>
+                <div>
+                    <p class="text-sm font-medium text-gray-500">Total Enregistrés</p>
+                    <p class="text-3xl font-bold text-nature-700">{{ total_agriculteurs }}</p>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-nature-100 flex items-center">
+                <div class="p-4 bg-blue-100 text-blue-700 rounded-full text-2xl mr-4">👨‍🌾</div>
+                <div>
+                    <p class="text-sm font-medium text-gray-500">Hommes</p>
+                    <p class="text-3xl font-bold text-blue-700">{{ total_hommes }}</p>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-nature-100 flex items-center">
+                <div class="p-4 bg-pink-100 text-pink-700 rounded-full text-2xl mr-4">👩‍🌾</div>
+                <div>
+                    <p class="text-sm font-medium text-gray-500">Femmes</p>
+                    <p class="text-3xl font-bold text-pink-700">{{ total_femmes }}</p>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-nature-100">
+                <p class="text-sm font-medium text-gray-500 mb-2">Tranches d'âges</p>
+                <ul class="text-xs space-y-1 text-gray-600">
+                    {% for tranche, count in tranches_ages.items %}
+                        <li class="flex justify-between"><span>{{ tranche }}:</span> <span class="font-bold">{{ count }}</span></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- 2. Statistiques de suivi des cas -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-yellow-100 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-yellow-600 uppercase">Cas en attente</p>
+                    <p class="text-2xl font-bold text-yellow-700">{{ cas_attente }}</p>
+                </div>
+                <span class="text-3xl">⏳</span>
+            </div>
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-blue-100 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-blue-600 uppercase">En cours de traitement</p>
+                    <p class="text-2xl font-bold text-blue-700">{{ cas_en_cours }}</p>
+                </div>
+                <span class="text-3xl">🔄</span>
+            </div>
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-green-100 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold text-green-600 uppercase">Traités / Résolus</p>
+                    <p class="text-2xl font-bold text-green-700">{{ cas_traites }}</p>
+                </div>
+                <span class="text-3xl">✅</span>
+            </div>
+        </div>
+
+        <!-- Analyses de toutes les questions du formulaire -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-nature-100">
+                <h3 class="text-md font-semibold text-nature-700 mb-3 pb-2 border-b">📍 Top Localités</h3>
+                <ul class="space-y-2 text-sm">
+                    {% for loc, count in top_localites.items %}
+                        <li class="flex justify-between"><span>{{ loc }}</span><span class="bg-nature-100 text-nature-700 px-2 py-0.5 rounded-full text-xs font-semibold">{{ count }}</span></li>
+                    {% empty %}
+                        <li class="text-gray-400 italic text-xs">Aucune donnée</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-nature-100">
+                <h3 class="text-md font-semibold text-nature-700 mb-3 pb-2 border-b">💧 Sources d'eau</h3>
+                <ul class="space-y-2 text-sm">
+                    {% for eau, count in sources_eau.items %}
+                        <li class="flex justify-between"><span>{{ eau }}</span><span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs font-semibold">{{ count }}</span></li>
+                    {% empty %}
+                        <li class="text-gray-400 italic text-xs">Aucune donnée</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-nature-100">
+                <h3 class="text-md font-semibold text-nature-700 mb-3 pb-2 border-b">⚠️ Difficultés Fréquentes</h3>
+                <ul class="space-y-2 text-sm">
+                    {% for prob, count in problemes_frequents.items %}
+                        <li class="flex justify-between"><span>{{ prob }}</span><span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full text-xs font-semibold">{{ count }}</span></li>
+                    {% empty %}
+                        <li class="text-gray-400 italic text-xs">Aucune donnée</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Tableau récapitulatif -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-nature-100">
+            <h2 class="text-lg font-semibold text-nature-700 mb-4">Aperçu rapide des derniers agriculteurs enregistrés</h2>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-gray-200 text-sm text-gray-500">
+                            <th class="py-3 px-4">Nom et Prénom</th>
+                            <th class="py-3 px-4">Sexe</th>
+                            <th class="py-3 px-4">Âge</th>
+                            <th class="py-3 px-4">Localité</th>
+                            <th class="py-3 px-4">Statut</th>
+                            <th class="py-3 px-4 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100 text-sm">
+                        {% for ag in agriculteurs_list %}
+                        <tr class="hover:bg-nature-50 transition">
+                            <td class="py-3 px-4 font-medium text-gray-800">{{ ag.nom_prenom }}</td>
+                            <td class="py-3 px-4 text-gray-600">{{ ag.sexe }}</td>
+                            <td class="py-3 px-4 text-gray-600">{{ ag.age }} ans</td>
+                            <td class="py-3 px-4 text-gray-600">{{ ag.localite }}</td>
+                            <td class="py-3 px-4">
+                                {% if ag.statut_traitement == 'traite' %}
+                                    <span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">Traité</span>
+                                {% elif ag.statut_traitement == 'en_cours' %}
+                                    <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">En cours</span>
+                                {% else %}
+                                    <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-semibold">En attente</span>
+                                {% endif %}
+                            </td>
+                            <td class="py-3 px-4 text-right space-x-1">
+                                <a href="{% url 'detail_agriculteur' ag.id %}" class="text-nature-700 hover:text-nature-900 font-medium text-xs bg-nature-100 hover:bg-nature-200 px-2.5 py-1.5 rounded-md transition">Consulter</a>
+                                <a href="{% url 'modifier_agriculteur' ag.id %}" class="text-indigo-700 hover:text-indigo-900 font-medium text-xs bg-indigo-50 hover:bg-indigo-100 px-2.5 py-1.5 rounded-md transition">Modifier</a>
+                                
+                                {% if user.is_superuser or request.user.profil.role == 'admin' %}
+                                    <a href="{% url 'supprimer_agriculteur' ag.id %}" onclick="return confirm('Voulez-vous vraiment supprimer cet agriculteur ?');" class="text-red-600 hover:text-red-800 font-medium text-xs bg-red-50 hover:bg-red-100 px-2.5 py-1.5 rounded-md transition">Supprimer</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="py-4 text-center text-gray-400 italic">Aucun agriculteur trouvé.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

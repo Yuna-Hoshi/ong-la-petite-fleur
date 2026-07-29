@@ -1,0 +1,41 @@
+{% extends 'agriculteurs/base.html' %}
+{% block title %}Fiche de {{ agriculteur.nom_prenom }}{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-nature-100 space-y-6">
+    <div class="flex justify-between items-center border-b pb-4">
+        <div>
+            <h1 class="text-2xl font-bold text-nature-700">{{ agriculteur.nom_prenom }}</h1>
+            <p class="text-sm text-gray-500">Localité : <span class="font-semibold text-gray-700">{{ agriculteur.localite }}</span></p>
+        </div>
+        <a href="{% url 'dashboard_analyse' %}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition">← Retour au tableau de bord</a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+        <div class="space-y-3 bg-nature-50 p-4 rounded-lg">
+            <p><strong>Sexe :</strong> {{ agriculteur.sexe }}</p>
+            <p><strong>Âge :</strong> {{ agriculteur.age }} ans</p>
+            <p><strong>Contact :</strong> {{ agriculteur.contact_telephonique|default:"Non renseigné" }}</p>
+            <p><strong>Langue principale :</strong> {{ agriculteur.langue_principale }}</p>
+            <p><strong>Niveau d'instruction :</strong> {{ agriculteur.niveau_instruction }}</p>
+            <p><strong>Activité principale :</strong> {{ agriculteur.activite_principale }}</p>
+            <p><strong>Expérience :</strong> {{ agriculteur.experience }}</p>
+        </div>
+
+        <div class="space-y-3 bg-nature-50 p-4 rounded-lg">
+            <p><strong>Principales cultures :</strong> {{ agriculteur.principales_cultures }}</p>
+            <p><strong>Matériel agricole :</strong> {{ agriculteur.materiel_agricole }}</p>
+            <p><strong>Ressources disponibles :</strong> {{ agriculteur.ressources_disponibles }}</p>
+            <p><strong>Méthode de stockage :</strong> {{ agriculteur.methode_stockage }}</p>
+            <p><strong>Source d'eau :</strong> {{ agriculteur.source_eau }}</p>
+            <p><strong>Période de production :</strong> {{ agriculteur.periode_production }}</p>
+            <p><strong>Production totale/an :</strong> {{ agriculteur.total_production_an }}</p>
+        </div>
+    </div>
+
+    <div class="bg-amber-50 p-4 rounded-lg border border-amber-200 space-y-2">
+        <p><strong>Pertes rencontrées :</strong> {{ agriculteur.pertes_rencontrees }}</p>
+        <p><strong>Difficultés / Problèmes :</strong> {{ agriculteur.problemes_rencontres }}</p>
+    </div>
+</div>
+{% endblock %}

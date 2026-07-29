@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}La petite Fleur (ONG){% endblock %}</title>
+    <!-- Tailwind CSS pour un design moderne et professionnel -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        nature: {
+                            50: '#f4f9f4',
+                            100: '#e2f0e2',
+                            600: '#2c5e3b',
+                            700: '#1e3f20',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-nature-50 min-h-screen text-gray-800">
+
+    {% if user.is_authenticated %}
+    <!-- Barre de navigation si l'utilisateur est connecté -->
+    <nav class="bg-nature-700 text-white shadow-md relative z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                
+                <!-- Logo et Nom -->
+                <div class="flex items-center space-x-3">
+                    {% load static %}
+                    <img src="{% static 'agriculteurs/logo_petite_fleur.png' %}" alt="Logo La petite Fleur" class="h-10 w-10 object-contain rounded-full bg-white p-1 shadow-sm">
+                    <span class="text-xl font-bold tracking-wider">La petite Fleur (ONG)</span>
+                </div>
+
+                <!-- Liens de navigation principaux -->
+                <div class="flex items-center space-x-3">
+                    <a href="{% url 'dashboard_analyse' %}" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-nature-600 transition">📊Tableau de bord</a>
+                    
+                    <!-- Bouton Liste & Recherche -->
+                    <a href="{% url 'liste_agriculteurs' %}" class="px-3 py-2 rounded-md text-sm font-medium bg-nature-600 hover:bg-nature-500 transition flex items-center gap-1">
+                        🔍 Liste des agriculteurs                   </a>
+
+                    <a href="{% url 'ajouter_agriculteur' %}" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-nature-600 transition">➕ Ajouter un agriculteur</a>
+                    
+                    {% if request.user.is_superuser or request.user.profil.role == 'admin' %}
+                <!-- Ton lien ou bouton d'impression/rapport actuel dans l'en-tête -->
+                    <a href="{% url 'rapport_analyse_imprimable' %}" class="...">🖨️ Rapport / Imprimer</a>
+                    {% endif %}
+                    
+                    <!-- Bouton Profil avec Menu Déroulant -->
+                    <div class="relative ml-2">
+                        <button onclick="toggleMenu()" id="profileButton" class="flex items-center space-x-2 bg-nature-600 hover:bg-nature-500 text-white px-3 py-2 rounded-md text-sm font-medium transition border border-nature-100 focus:outline-none">
+                            <span>👤 Profil ({{ user.username }})</span>
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+
+                        <!-- Options du menu déroulant -->
+                        <div id="profileMenu" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg py-2 text-gray-700 border border-gray-100">
+                            
+                            <!-- Visible uniquement pour l'administrateur -->
+                            {% if user.is_superuser %}
+                                <a href="{% url 'gestion_utilisateurs' %}" class="block px-4 py-2 text-sm hover:bg-nature-50 hover:text-nature-700 transition">👥 Gérer les utilisateurs</a>
+                                <div class="border-t border-gray-100 my-1"></div>
+                            {% endif %}
+
+                            <a href="{% url 'deconnexion' %}" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition">🚪 Déconnexion</a>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </nav>
+    {% endif %}
+
+    <!-- Script JavaScript pour ouvrir/fermer le menu déroulant -->
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('profileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Fermer le menu si on clique en dehors
+        window.onclick = function(event) {
+            if (!event.target.closest('#profileButton')) {
+                const menu = document.getElementById('profileMenu');
+                if (menu && !menu.classList.contains('hidden')) {
+                    menu.classList.add('hidden');
+                }
+            }
+        }
+    </script>
+
+    <!-- Contenu principal -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+</body>
+</html>
